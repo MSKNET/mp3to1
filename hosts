@@ -1,0 +1,8 @@
+# Do not remove the following line, or various programs
+# that require network functionality will fail.
+127.0.0.1	localhost
+::1	localhost
+0.0.0.0	SynologyNAS
+# IMNKS.COM
+143.204.74.78 api.themoviedb.org
+143.204.74.49 api.themoviedb.org

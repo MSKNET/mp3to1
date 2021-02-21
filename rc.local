@@ -1,0 +1,33 @@
+#!/bin/bash
+main ()
+{
+	if [ -f "/etc/power_sched.conf" ]
+		then
+		if cat '/etc/power_sched.conf' | head -n 2 | grep '[0-9]' > /dev/null
+			then
+			rm -f  /etc/power_sched.conf
+			rm -f  /etc/crontab
+			reboot
+		fi
+	fi
+
+	local pids=$(ps aux |grep ledfan.sh |grep -v 'grep' |awk '{print $2}')
+	for pid in $pids; do
+		if [ -n "$pid" -a -d "/proc/${pid}" ]; then
+			kill -15 $pid
+			rm -rf /tmp/3to1
+			sleep 3
+		fi
+	done
+
+	mkdir -p /tmp/3to1
+	cp -f /etc/ledfan.sh /tmp/3to1/
+	nohup bash /tmp/3to1/ledfan.sh &> /dev/null &
+	
+	sleep 30
+	/usr/sbin/ntpdate -u ntp1.aliyun.com
+	synoservicectl --restart ddnsd
+}
+main
+sync
+exit $?
